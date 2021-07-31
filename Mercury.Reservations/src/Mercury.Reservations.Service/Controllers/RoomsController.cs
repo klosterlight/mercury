@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Mercury.Common;
 using Mercury.Reservations.Service.Dtos;
@@ -18,8 +20,17 @@ namespace Mercury.Reservations.Service.Controllers
             this.roomsRepository = roomsRepository;
         }
 
-        // GET /rooms/:id
+        // GET /rooms
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetAsync()
+        {
+            var rooms = (await roomsRepository.GetAllAsync())
+                        .Select(room => room.AsDto());
+            return Ok(rooms);
+        }
+
+        // GET /rooms/:id
+        [HttpGet("id")]
         public async Task<ActionResult<RoomDto>> GetByIdAsync(Guid Id)
         {
             var room = await roomsRepository.GetAsync(Id);
