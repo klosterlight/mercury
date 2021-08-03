@@ -4,5 +4,7 @@ namespace Mercury.Common.Settings
     {
         public string ServiceName { get; set; }
         public string Authority { get; init; }
+
+        public string DatabaseProvider { get; init; }
     }
 }

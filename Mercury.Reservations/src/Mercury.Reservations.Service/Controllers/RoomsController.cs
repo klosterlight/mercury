@@ -13,18 +13,18 @@ namespace Mercury.Reservations.Service.Controllers
     [Route("rooms")]
     public class RoomsController : ControllerBase
     {
-        private readonly IRepository<Room> roomsRepository;
+        private readonly IBaseComponent<Room> roomsComponent;
 
-        public RoomsController(IRepository<Room> roomsRepository)
+        public RoomsController(IBaseComponent<Room> roomsComponent)
         {
-            this.roomsRepository = roomsRepository;
+            this.roomsComponent = roomsComponent;
         }
 
         // GET /rooms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetAsync()
         {
-            var rooms = (await roomsRepository.GetAllAsync())
+            var rooms = (await roomsComponent.GetAllAsync())
                         .Select(room => room.AsDto());
             return Ok(rooms);
         }
@@ -33,7 +33,7 @@ namespace Mercury.Reservations.Service.Controllers
         [HttpGet("id")]
         public async Task<ActionResult<RoomDto>> GetByIdAsync(Guid Id)
         {
-            var room = await roomsRepository.GetAsync(Id);
+            var room = await roomsComponent.GetAsync(Id);
 
             if (room == null)
             {
@@ -49,7 +49,7 @@ namespace Mercury.Reservations.Service.Controllers
         {
             var room = new Room(roomDto);
 
-            await roomsRepository.CreateAsync(room);
+            await roomsComponent.CreateAsync(room);
 
             return CreatedAtAction(nameof(GetByIdAsync), new { id = room.Id }, room);
         }

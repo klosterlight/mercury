@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mercury.Common;
+using Mercury.Common.Business;
 using Mercury.Reservations.Service.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,8 @@ namespace mercury
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMongo()
-                    .AddMongoRepository<Room>("rooms");
+                    .AddMongoRepository<Room>("rooms")
+                    .AddComponent<Room>();
                     
             services.AddControllers(options =>
             {
