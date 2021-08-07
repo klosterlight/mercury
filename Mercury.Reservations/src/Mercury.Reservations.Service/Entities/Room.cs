@@ -6,7 +6,12 @@ namespace Mercury.Reservations.Service.Entities
 {
     public class Room : IEntity
     {
-        public Room() { }
+        public Room()
+        {
+            Id = Guid.NewGuid();
+            CreatedAt = DateTimeOffset.UtcNow;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
         public Room(CreateRoomDto dto)
         {
             Id = Guid.NewGuid();
