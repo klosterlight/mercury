@@ -1,8 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using Mercury.Common;
 using Mercury.Reservations.Service.Dtos;
 using Mercury.Reservations.Service.Entities;
 using Mercury.Reservations.Tests.Fixtures;
@@ -35,8 +36,37 @@ namespace Mercury.Reservations.Tests
             var stringResponse = await response.Content.ReadAsStringAsync();
             var rooms = JsonConvert.DeserializeObject<List<RoomDto>>(stringResponse);
 
-            Assert.Equal(1, rooms.Count);
+            Assert.Single(rooms);
             Assert.Equal(room.Id, rooms[0].Id);
         }
+
+        [Theory]
+        [ClassData(typeof(RoomDataGenerator))]
+        public async Task InvalidRoom(Guid id, string title, string description, int numberOfTickets, string errorKey, string errorMessage)
+        {
+            var room = new CreateRoomDto(id, title, description, numberOfTickets);
+            var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("/rooms", stringContent);
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ErrorResponse>(stringResponse);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            var a = error.Errors[errorKey];
+            Assert.Contains(errorMessage, a);
+        }
+    }
+
+    class RoomDataGenerator : IEnumerable<object[]>
+    {
+        private readonly List<object[]> _data = new List<object[]>
+        {
+            new object[] { Guid.NewGuid(), "asdf", "", 0, "NumberOfTickets", "The field NumberOfTickets must be between 1 and 2147483647."},
+            new object[] { Guid.NewGuid(), "", "", 1, "Title", "The Title field is required."},
+            new object[] { Guid.Empty, "asdf", "", 1, "Id", "The Id field requires a non-default value."}
+        };
+
+        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
