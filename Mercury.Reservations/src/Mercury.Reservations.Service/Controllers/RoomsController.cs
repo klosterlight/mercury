@@ -51,7 +51,7 @@ namespace Mercury.Reservations.Service.Controllers
 
             await roomsComponent.CreateAsync(room);
 
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = room.Id }, room);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = room.Id }, room.AsDto());
         }
     }
 }

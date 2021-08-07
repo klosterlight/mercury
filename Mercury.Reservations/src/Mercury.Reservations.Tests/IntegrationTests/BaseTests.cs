@@ -1,4 +1,5 @@
 using Mercury.Common;
+using Mercury.Reservations.Service;
 using Mercury.Reservations.Tests.Fixtures;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;

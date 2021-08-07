@@ -33,7 +33,7 @@ namespace Mercury.Reservations.Tests.Fixtures
 
         public void Dispose()
         {
-            db.DropCollection("rooms");
+            db.DropCollection(_roomsCollection);
         }
     }
 }
