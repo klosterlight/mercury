@@ -10,6 +10,7 @@ using Mercury.Reservations.Service.Dtos;
 using Mercury.Reservations.Service.Entities;
 using Mercury.Reservations.Tests.Fixtures;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -25,19 +26,23 @@ namespace Mercury.Reservations.Tests
         [Fact]
         public async Task GetRooms()
         {
-            var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10);
-            var room = new Room(roomDto);
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
+                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10);
+                var room = new Room(roomDto);
+                await roomRepository.CreateAsync(room);
 
-            await _dbFixture.CreateRoom(room);
-            
-            var response = await _httpClient.GetAsync("/rooms");
-            response.EnsureSuccessStatusCode();
+                var response = await _httpClient.GetAsync("/rooms");
+                response.EnsureSuccessStatusCode();
 
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var rooms = JsonConvert.DeserializeObject<List<RoomDto>>(stringResponse);
+                var stringResponse = await response.Content.ReadAsStringAsync();
+                var rooms = JsonConvert.DeserializeObject<List<RoomDto>>(stringResponse);
 
-            Assert.Single(rooms);
-            Assert.Equal(room.Id, rooms[0].Id);
+                Assert.Single(rooms);
+                Assert.Equal(room.Id, rooms[0].Id);
+            }
+
         }
 
         [Theory]

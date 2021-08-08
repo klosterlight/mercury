@@ -15,7 +15,7 @@ namespace Mercury.Common
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-            services.AddSingleton(serviceProvider =>
+            services.AddSingleton<IMongoDatabase>(serviceProvider =>
             {
                 var configuration = serviceProvider.GetService<IConfiguration>();
                 var serviceSettings = configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
