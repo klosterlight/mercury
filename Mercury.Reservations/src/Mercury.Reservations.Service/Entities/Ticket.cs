@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mercury.Common;
 
 namespace Mercury.Reservations.Service.Entities
@@ -25,5 +26,7 @@ namespace Mercury.Reservations.Service.Entities
         public decimal Price { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+        public bool IsValid { get; set; }
+        public List<string> Errors { get; set; }
     }
 }

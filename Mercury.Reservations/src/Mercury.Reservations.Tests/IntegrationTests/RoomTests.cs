@@ -58,10 +58,31 @@ namespace Mercury.Reservations.Tests
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Contains(errorMessage, error.Errors[errorKey]);
         }
+        
+        [Fact]
+        public async Task CreatingDuplicatedRoom()
+        {
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
+                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10);
+                var room = new Room(roomDto);
+                var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
+                await roomRepository.CreateAsync(room);
+
+                var response = await _httpClient.PostAsync("/rooms", stringContent);
+                var stringResponse = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ErrorResponse>(stringResponse);
+                string errorMessage = "Repeated room";
+                Assert.Equal(System.Net.HttpStatusCode.UnprocessableEntity, response.StatusCode);
+                Assert.Contains(errorMessage, error.Errors[""]);
+            }
+        }
 
         [Fact]
         public async Task CreateRoom()
         {
+            _dbFixture.Dispose();
             var room = new CreateRoomDto(Guid.NewGuid(), "Title", "Description", 500);
             var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
 

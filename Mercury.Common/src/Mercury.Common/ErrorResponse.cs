@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Mercury.Reservations.Tests
+namespace Mercury.Common
 {
     public class ErrorResponse
     {
@@ -8,6 +8,6 @@ namespace Mercury.Reservations.Tests
         public string Title { get; set; }
         public int Status { get; set; }
         public string TraceId { get; set; }
-        public IDictionary<string, object[]> Errors{ get; set; }
+        public IDictionary<string, object[]> Errors { get; set; }
     }
 }

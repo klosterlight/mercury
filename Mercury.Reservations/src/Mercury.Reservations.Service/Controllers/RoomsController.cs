@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mercury.Common;
+using Mercury.Reservations.Service.Business;
 using Mercury.Reservations.Service.Dtos;
 using Mercury.Reservations.Service.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,11 @@ namespace Mercury.Reservations.Service.Controllers
     [Route("rooms")]
     public class RoomsController : ControllerBase
     {
-        private readonly IBaseComponent<Room> roomsComponent;
+        private readonly RoomsComponent roomsComponent;
 
-        public RoomsController(IBaseComponent<Room> roomsComponent)
+        public RoomsController(IRepository<Room> repository)
         {
-            this.roomsComponent = roomsComponent;
+            this.roomsComponent = new RoomsComponent(repository);
         }
 
         // GET /rooms
@@ -49,9 +50,23 @@ namespace Mercury.Reservations.Service.Controllers
         {
             var room = new Room(roomDto);
 
-            await roomsComponent.CreateAsync(room);
+            room = await roomsComponent.CreateAsync(room);
 
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = room.Id }, room.AsDto());
+            if(room.IsValid)
+            {
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = room.Id }, room.AsDto());
+            }
+            else
+            {
+                return UnprocessableEntity(new ErrorResponse()
+                {
+                    Status = 422,
+                    Errors = new Dictionary<string, object[]>
+                    {
+                        { "", room.Errors.ToArray() }
+                    }
+                });
+            }
         }
     }
 }

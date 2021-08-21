@@ -30,8 +30,7 @@ namespace Mercury.Reservations.Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMongo()
-                    .AddMongoRepository<Room>("rooms")
-                    .AddComponent<Room>();
+                    .AddMongoRepository<Room>("rooms");
                     
             services.AddControllers(options =>
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 
-namespace Mercury.Common
+namespace Mercury.Common.Business
 {
     public interface IBaseComponent<T> where T : IEntity
     {
