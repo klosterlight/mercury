@@ -11,6 +11,6 @@ namespace Mercury.Common
 
         bool IsValid { get; set; }
 
-        List<string> Errors { get; set; }
+        Dictionary<string, object[]> Errors { get; set; }
     }
 }

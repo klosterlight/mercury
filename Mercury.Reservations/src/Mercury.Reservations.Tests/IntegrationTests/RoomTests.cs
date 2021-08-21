@@ -73,9 +73,11 @@ namespace Mercury.Reservations.Tests
                 var response = await _httpClient.PostAsync("/rooms", stringContent);
                 var stringResponse = await response.Content.ReadAsStringAsync();
                 var error = JsonConvert.DeserializeObject<ErrorResponse>(stringResponse);
-                string errorMessage = "Repeated room";
+                string errorMessage = "The Field Id is repeated";
+                string errorMessage0 = "The Field Title is repeated";
                 Assert.Equal(System.Net.HttpStatusCode.UnprocessableEntity, response.StatusCode);
-                Assert.Contains(errorMessage, error.Errors[""]);
+                Assert.Contains(errorMessage, error.Errors["Id"]);
+                Assert.Contains(errorMessage0, error.Errors["Title"]);
             }
         }
 

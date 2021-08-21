@@ -58,14 +58,7 @@ namespace Mercury.Reservations.Service.Controllers
             }
             else
             {
-                return UnprocessableEntity(new ErrorResponse()
-                {
-                    Status = 422,
-                    Errors = new Dictionary<string, object[]>
-                    {
-                        { "", room.Errors.ToArray() }
-                    }
-                });
+                return UnprocessableEntity(new ErrorResponse(422, room));
             }
         }
     }

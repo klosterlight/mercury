@@ -13,7 +13,7 @@ namespace Mercury.Reservations.Service.Entities
             CreatedAt = DateTimeOffset.UtcNow;
             UpdatedAt = DateTimeOffset.UtcNow;
             IsValid = true;
-            Errors = new List<string>();
+            Errors = new Dictionary<string, object[]>();
         }
         public Room(CreateRoomDto dto)
         {
@@ -31,7 +31,7 @@ namespace Mercury.Reservations.Service.Entities
                 Tickets.Add(ticket);
             }
             IsValid = true;
-            Errors = new List<string>();
+            Errors = new Dictionary<string, object[]>();
         }
         [RequireNonDefault]
         public Guid Id { get; set; }
@@ -44,6 +44,6 @@ namespace Mercury.Reservations.Service.Entities
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public bool IsValid { get; set; }
-        public List<string> Errors { get; set; }
+        public Dictionary<string, object[]> Errors { get; set; }
     }
 }

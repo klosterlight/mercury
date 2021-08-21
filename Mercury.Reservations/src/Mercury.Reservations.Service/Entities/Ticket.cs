@@ -19,6 +19,7 @@ namespace Mercury.Reservations.Service.Entities
             UpdatedAt = DateTimeOffset.UtcNow;
             Status = Statuses.Available;
             Price = 500;
+            Errors = new Dictionary<string, object[]>();
         }
         public Guid Id { get; set; }
         public int Folio { get; set; }
@@ -27,6 +28,6 @@ namespace Mercury.Reservations.Service.Entities
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public bool IsValid { get; set; }
-        public List<string> Errors { get; set; }
+        public Dictionary<string, object[]> Errors { get; set; }
     }
 }
