@@ -32,6 +32,7 @@ namespace Mercury.Reservations.Service.Entities
             }
             IsValid = true;
             Errors = new Dictionary<string, object[]>();
+            ExpiresAt = dto.ExpiresAt;
         }
         [RequireNonDefault]
         public Guid Id { get; set; }
@@ -43,6 +44,7 @@ namespace Mercury.Reservations.Service.Entities
         public List<Ticket> Tickets { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset ExpiresAt { get; set; }
         public bool IsValid { get; set; }
         public Dictionary<string, object[]> Errors { get; set; }
     }

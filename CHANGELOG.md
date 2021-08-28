@@ -1,7 +1,10 @@
 # Mercury
 
-# Mercury.Common v1.0.4.9
-# Mercury.Reservations v1.0.1.0
+# Mercury.Common v1.0.5.3
+# Mercury.Reservations v1.0.1.1
+
+## 2021-08-28
+1. [ADD] Adds validation that requires ExpiredAt for rooms, must be at least one more day than today
 
 ## 2021-08-21
 1. Adds validation uniqueness title and Id for Rooms

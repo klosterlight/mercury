@@ -7,7 +7,7 @@ namespace Mercury.Reservations.Service.Dtos
     {
         public static RoomDto AsDto(this Room room)
         {
-            return new RoomDto(room.Id, room.Title, room.Description, room.NumberOfTickets, room.CreatedAt, room.UpdatedAt, room.Tickets.Select(x => x.AsDto()));
+            return new RoomDto(room.Id, room.Title, room.Description, room.NumberOfTickets, room.CreatedAt, room.UpdatedAt, room.Tickets.Select(x => x.AsDto()), room.ExpiresAt);
         }
 
         public static TicketDto AsDto(this Ticket ticket)

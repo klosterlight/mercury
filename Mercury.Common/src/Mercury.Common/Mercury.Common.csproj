@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyVersion>1.0.4.9</AssemblyVersion>
-    <PackageVersion>1.0.4.9</PackageVersion>
+    <AssemblyName>Mercury.Common</AssemblyName>
+    <AssemblyVersion>1.0.5.3</AssemblyVersion>
+    <PackageVersion>1.0.5.3</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

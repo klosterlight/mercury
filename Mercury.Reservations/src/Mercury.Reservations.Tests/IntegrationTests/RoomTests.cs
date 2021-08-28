@@ -29,7 +29,7 @@ namespace Mercury.Reservations.Tests
             using (var scope = _factory.Services.CreateScope())
             {
                 var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
-                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10);
+                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10, DateTimeOffset.Now.AddDays(1));
                 var room = new Room(roomDto);
                 await roomRepository.CreateAsync(room);
 
@@ -47,9 +47,9 @@ namespace Mercury.Reservations.Tests
 
         [Theory]
         [ClassData(typeof(RoomDataGenerator))]
-        public async Task InvalidRoom(Guid id, string title, string description, int numberOfTickets, string errorKey, string errorMessage)
+        public async Task InvalidRoom(Guid id, string title, string description, int numberOfTickets, DateTimeOffset expiresAt, string errorKey, string errorMessage)
         {
-            var room = new CreateRoomDto(id, title, description, numberOfTickets);
+            var room = new CreateRoomDto(id, title, description, numberOfTickets, expiresAt);
             var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("/rooms", stringContent);
@@ -65,7 +65,7 @@ namespace Mercury.Reservations.Tests
             using (var scope = _factory.Services.CreateScope())
             {
                 var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
-                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10);
+                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10, DateTimeOffset.Now.AddDays(1));
                 var room = new Room(roomDto);
                 var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
                 await roomRepository.CreateAsync(room);
@@ -85,7 +85,8 @@ namespace Mercury.Reservations.Tests
         public async Task CreateRoom()
         {
             _dbFixture.Dispose();
-            var room = new CreateRoomDto(Guid.NewGuid(), "Title", "Description", 500);
+            var currentDateTime = DateTimeOffset.Now.AddDays(7);
+            var room = new CreateRoomDto(Guid.NewGuid(), "Title", "Description", 500, currentDateTime);
             var stringContent = new StringContent(JsonConvert.SerializeObject(room), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("/rooms", stringContent);
@@ -98,6 +99,7 @@ namespace Mercury.Reservations.Tests
             Assert.Equal("001", tickets[0].Folio);
             Assert.Equal(500, tickets[0].Price);
             Assert.Equal(Ticket.Statuses.Available.ToString(), tickets[0].Status);
+            Assert.Equal(currentDateTime, responseObject.ExpiresAt);
         }
     }
 
@@ -105,9 +107,10 @@ namespace Mercury.Reservations.Tests
     {
         private readonly List<object[]> _data = new List<object[]>
         {
-            new object[] { Guid.NewGuid(), "asdf", "", 0, "NumberOfTickets", "The field NumberOfTickets must be between 1 and 2147483647."},
-            new object[] { Guid.NewGuid(), "", "", 1, "Title", "The Title field is required."},
-            new object[] { Guid.Empty, "asdf", "", 1, "Id", "The Id field requires a non-default value."}
+            new object[] { Guid.NewGuid(), "asdf", "", 0, DateTimeOffset.Now, "NumberOfTickets", "The field NumberOfTickets must be between 1 and 2147483647."},
+            new object[] { Guid.NewGuid(), "", "", 1, DateTimeOffset.Now, "Title", "The Title field is required."},
+            new object[] { Guid.Empty, "asdf", "", 1, DateTimeOffset.Now, "Id", "The Id field requires a non-default value."},
+            new object[] { Guid.NewGuid(), "asdf", "", 1, DateTimeOffset.Now.AddDays(-1), "ExpiresAt", $"ExpiresAt must be greater than {DateTimeOffset.Now.ToString("yyyy-MM-dd")}."},
         };
 
         public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
