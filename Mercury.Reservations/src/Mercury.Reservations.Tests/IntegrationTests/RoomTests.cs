@@ -28,10 +28,10 @@ namespace Mercury.Reservations.Tests
         {
             using (var scope = _factory.Services.CreateScope())
             {
+                _dbFixture.Dispose();
                 var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
-                var roomDto = new CreateRoomDto(Guid.NewGuid(), "Title", "", 10, DateTimeOffset.Now.AddDays(1));
-                var room = new Room(roomDto);
-                await roomRepository.CreateAsync(room);
+                var roomFixture = new RoomFixture(roomRepository);
+                var room = await roomFixture.CreateValidRoom();
 
                 var response = await _httpClient.GetAsync("/rooms");
                 response.EnsureSuccessStatusCode();
@@ -42,7 +42,27 @@ namespace Mercury.Reservations.Tests
                 Assert.Single(rooms);
                 Assert.Equal(room.Id, rooms[0].Id);
             }
+        }
 
+        [Fact]
+        public async Task GetActiveRooms()
+        {
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var roomRepository = scope.ServiceProvider.GetService<IRepository<Room>>();
+                var roomFixture = new RoomFixture(roomRepository);
+                var numberOfRooms = 10;
+                var validRooms = await roomFixture.CreateMultipleValidRooms(numberOfRooms);
+                var invalidRoom0 = await roomFixture.CreateExpiredRoom();
+                var invalidRoom1 = await roomFixture.CreateExpiredRoom();
+                var invalidRoom2 = await roomFixture.CreateExpiredRoom();
+
+                var response =  await _httpClient.GetAsync("/rooms?active=true");
+                var stringResponse = await response.Content.ReadAsStringAsync();
+                var rooms = JsonConvert.DeserializeObject<List<RoomDto>>(stringResponse);
+
+                Assert.Equal(numberOfRooms, rooms.Count());
+            }
         }
 
         [Theory]

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Mercury.Common;
 using Mercury.Common.Business;
@@ -12,6 +15,32 @@ namespace Mercury.Reservations.Service.Business
         public RoomsComponent(IRepository<Room> repository) : base(repository)
         {
             _repository = repository;
+        }
+
+        public async Task<IEnumerable<Room>> GetAllAsync(string active)
+        {
+            IEnumerable<Room> entities;
+            
+            if(string.IsNullOrEmpty(active))
+            {
+                entities = await base.GetAllAsync();
+            }
+            else
+            {
+                Expression<Func<Room, bool>> filter;
+                if(active == "true")
+                {
+                    filter = x => x.ExpiresAt > DateTimeOffset.Now;
+                }
+                else
+                {
+                    filter = x => x.ExpiresAt <= DateTimeOffset.Now;
+                }
+                
+                entities = await base.GetAllAsync(filter);
+            }
+            
+            return entities;
         }
 
         public override async Task<Room> CreateAsync(Room entity)

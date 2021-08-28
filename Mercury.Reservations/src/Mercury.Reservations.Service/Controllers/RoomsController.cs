@@ -23,9 +23,9 @@ namespace Mercury.Reservations.Service.Controllers
 
         // GET /rooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoomDto>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetAsync(string active = "")
         {
-            var rooms = (await roomsComponent.GetAllAsync())
+            var rooms = (await roomsComponent.GetAllAsync(active))
                         .Select(room => room.AsDto());
             return Ok(rooms);
         }
