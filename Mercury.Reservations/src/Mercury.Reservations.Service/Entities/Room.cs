@@ -14,6 +14,7 @@ namespace Mercury.Reservations.Service.Entities
             UpdatedAt = DateTimeOffset.UtcNow;
             IsValid = true;
             Errors = new Dictionary<string, object[]>();
+            Tickets = new List<Ticket>();
         }
         public Room(CreateRoomDto dto)
         {
