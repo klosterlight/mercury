@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mercury.Common;
 using Mercury.Common.Business;
+using Mercury.Reservations.Hubs;
 using Mercury.Reservations.Service.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,18 @@ namespace Mercury.Reservations.Service
         {
             services.AddMongo()
                     .AddMongoRepository<Room>("rooms");
+
+            services.AddSignalR();
+
+            services.AddCors(options =>
+                    {
+                        options.AddPolicy("CorsPolicy",
+                            builder => builder
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .SetIsOriginAllowed((hosts) => true));
+                    });
                     
             services.AddControllers(options =>
             {
@@ -51,6 +64,7 @@ namespace Mercury.Reservations.Service
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "mercury v1"));
             }
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
@@ -61,6 +75,7 @@ namespace Mercury.Reservations.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<RoomHub>("/roomshub");
             });
         }
     }

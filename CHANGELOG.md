@@ -3,6 +3,9 @@
 # Mercury.Common v1.0.5.3
 # Mercury.Reservations v1.0.1.2
 
+## 2021-09-11
+1. [ADD] Adds SignalR to the app
+
 ## 2021-08-28
 1. [ADD] Adds validation that requires ExpiredAt for rooms, must be at least one more day than today
 2. [ADD] Adds RoomFixture for creating mock data

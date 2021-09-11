@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mercury.Common;
+using Mercury.Reservations.Hubs;
 using Mercury.Reservations.Service.Business;
 using Mercury.Reservations.Service.Dtos;
 using Mercury.Reservations.Service.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Mercury.Reservations.Service.Controllers
 {
@@ -15,10 +17,12 @@ namespace Mercury.Reservations.Service.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly RoomsComponent roomsComponent;
+        private readonly IHubContext<RoomHub> _hub;
 
-        public RoomsController(IRepository<Room> repository)
+        public RoomsController(IRepository<Room> repository, IHubContext<RoomHub> hub)
         {
             this.roomsComponent = new RoomsComponent(repository);
+            _hub = hub;
         }
 
         // GET /rooms
@@ -27,6 +31,8 @@ namespace Mercury.Reservations.Service.Controllers
         {
             var rooms = (await roomsComponent.GetAllAsync(active))
                         .Select(room => room.AsDto());
+
+            await _hub.Clients.All.SendAsync("newMessage", "anonymous", "Hello World");
             return Ok(rooms);
         }
 
